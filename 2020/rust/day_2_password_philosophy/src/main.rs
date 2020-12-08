@@ -27,10 +27,26 @@ fn validate_password_char_count(input: &ProcessedInput) -> bool {
     println!(" ==> {}", result);
     return result
 }
-
 // Part 2
 fn validate_password_char_indices(input: &ProcessedInput) -> bool {
-    unimplemented!();
+    let char_to_check = input.1.chars().next().unwrap();
+    let mut char_positions = input.0.split('-');
+    let first: usize = char_positions.next().unwrap().to_string().parse().unwrap();
+    let second: usize = char_positions.next().unwrap().to_string().parse().unwrap();
+    let password = input.2;
+    print!("Checking {} for {}-{} {}'s", password, first, second, char_to_check);
+
+    let mut result: bool = true;
+    if password.chars().nth(first-1).unwrap() == char_to_check &&
+       password.chars().nth(second-1).unwrap() == char_to_check {
+            result = false;
+    }
+    if password.chars().nth(first-1).unwrap() != char_to_check &&
+       password.chars().nth(second-1).unwrap() != char_to_check {
+            result = false;
+    }
+    println!(" ==> {}", result);
+    return result
 }
 
 fn main() {
@@ -44,13 +60,13 @@ fn main() {
     println!("{} passwords are valid by count! -- PART1", part1);
 
     // TODO: can the reading of the file be moved to its own function?
-//    let part2 = std::fs::read_to_string("src/input.txt")
-//        .expect("file not found!")
-//        .lines()
-//        .map(|line| clean_line(line))
-//        .filter(|proc_in| validate_password(proc_in))
-//        .count();
-//    println!();
-//    println!("{} passwords are valid by count! -- PART1", part2);
+    let part2 = std::fs::read_to_string("src/input.txt")
+        .expect("file not found!")
+        .lines()
+        .map(|line| clean_line(line))
+        .filter(|proc_in| validate_password_char_indices(proc_in))
+        .count();
+    println!();
+    println!("{} passwords are valid by count! -- PART2", part2);
 }
 
