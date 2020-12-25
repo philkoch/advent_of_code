@@ -13,7 +13,7 @@ fn load_puzzle_input(path: &str) -> Vec<String> {
 /// returns true if the column's char of line == #, otherwise false
 fn is_tree(line: &String, column: usize) -> bool {
 	if line.chars().nth(column).unwrap() == '#' {
-		println!("Found tree!");
+		//println!("Found tree!");
 		return true;
 	}
 	return false
@@ -31,16 +31,16 @@ fn get_next_col_idx(line: &String, column: i32, step: i32) -> usize {
 }
 
 /// takes a puzzle and step definition input to count the number of 'trees' we step on
-fn how_many_trees(puzzle: Vec<String>, right: i32, down: usize) -> u32 {
+fn how_many_trees(puzzle: Vec<String>, right: i32, down: usize) -> u64 {
 	// first column is not counted --> start-field
 	let mut col_idx: i32 = 0;
-	let mut trees: u32 = 0;
+	let mut trees: u64 = 0;
 	// skip first down element because we're going need to search
 	// the line that we're in AFTER the step was completed
-	for line in puzzle.iter().step_by(down).skip(down) {
+	for line in puzzle.iter().step_by(down).skip(1) {
 		let col_idx_us: usize = get_next_col_idx(line, col_idx, right);
 		col_idx = col_idx_us as i32;
-		println!("Checking char {} in {}", col_idx_us, line);
+		//println!("Checking char {} in {}", col_idx_us, line);
 		if is_tree(line, col_idx_us) {
 			trees += 1
 		}
@@ -52,8 +52,20 @@ fn main() {
 	// Part 1
 	let path = "src/input";
     let puzzle: Vec<String> = load_puzzle_input(path);
-    let trees = how_many_trees(puzzle, 3, 1);
+    let trees = how_many_trees(puzzle.clone(), 3, 1);
 	println!("Found {} trees in puzzle from {}", trees, path);
+
+
+    println!("Part Two:");
+	// Part 2
+	let trees1 = how_many_trees(puzzle.clone(), 1, 1);
+	let trees2 = how_many_trees(puzzle.clone(), 3, 1);
+	let trees3 = how_many_trees(puzzle.clone(), 5, 1);
+	let trees4 = how_many_trees(puzzle.clone(), 7, 1);
+	let trees5 = how_many_trees(puzzle.clone(), 1, 2);
+    println!("multiplying trees ({},{},{},{},{})...",trees1, trees2, trees3, trees4, trees5);
+    let multiplied_trees = trees1 * trees2 * trees3 * trees4 * trees5;
+    println!("Result: {}", multiplied_trees);
 
 }
 
@@ -94,7 +106,12 @@ mod tests {
 		puzzample.push(String::from("#.##...#..."));
 		puzzample.push(String::from("#...##....#"));
 		puzzample.push(String::from(".#..#...#.#"));
-		assert_eq!(7, how_many_trees(puzzample, 3, 1));
+		assert_eq!(7, how_many_trees(puzzample.clone(), 3, 1));
+		// Part 2 tests
+		assert_eq!(2, how_many_trees(puzzample.clone(), 1, 1));
+		assert_eq!(3, how_many_trees(puzzample.clone(), 5, 1));
+		assert_eq!(4, how_many_trees(puzzample.clone(), 7, 1));
+		assert_eq!(2, how_many_trees(puzzample.clone(), 1, 2));
 	}
 
 }
