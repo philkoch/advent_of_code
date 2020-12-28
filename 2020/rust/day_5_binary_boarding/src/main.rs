@@ -55,6 +55,41 @@ fn get_max_seat_id(current_max: u32, seat_id: u32) -> u32 {
     cmp::max(current_max, seat_id)
 }
 
+fn find_missing_seat(puzzle: Vec<String>) -> u32 {
+    let max_row = 127;
+    let max_seat = 7;
+    let mut seat_ids: Vec<u32> = puzzle.into_iter()
+          .map(|seat_def| find_seat(&seat_def, max_row, max_seat))
+          .map(|seat| get_seat_id(seat.0, seat.1))
+          .collect();
+    seat_ids.sort();
+
+    let mut seat_iter = seat_ids.iter();
+    let mut last_num = match seat_iter.next() {
+            Some(x) => x,
+            None => {
+                println!("No seats found!");
+                return 0
+            }
+    };
+    loop  {
+        match seat_iter.next() {
+            Some(x) => {
+                //println!("Here? {},{}", x, num0);
+                if x - last_num != 1 {
+                    println!("Found {},{}", x, last_num);
+                    println!("Seat is {}", x-1);
+                    return x-1;
+                }
+                last_num = x;
+            },
+            None => break
+        };
+    }
+    println!("No seat found");
+    return 0
+}
+
 fn main() {
     let input = load_puzzle_input("src/input");
     let mut max_seat_id = 0;
@@ -65,6 +100,10 @@ fn main() {
     }
     println!("PART_1:");
     println!("max seat id is {}", max_seat_id);
+
+    println!("PART_2:");
+    let input = load_puzzle_input("src/input");
+    find_missing_seat(input);
 }
 
 #[test]
